@@ -1,6 +1,6 @@
 from PIL import Image, ImageDraw
 from scipy.spatial import ConvexHull
-from utils import endpt
+from utils import endpt, mdpt
 import random
 import numpy as np
 

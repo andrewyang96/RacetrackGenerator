@@ -1,5 +1,5 @@
 import numpy as np
-from numpy.linalg import norm, inv
+from numpy.linalg import norm
 from scipy.ndimage.interpolation import rotate
 import math
 
@@ -27,6 +27,10 @@ def vector(p1, p2):
     """Returns vector from p1 to p2."""
     vec = np.subtract(p2, p1)
     return tuple(vec)
+
+def normalize(v):
+    n = np.divide(v, norm(v))
+    return tuple(n)
 
 def rotationMatrix(theta, unit='r'):
     """Returns rotation matrix using angle theta."""
@@ -66,9 +70,8 @@ def endpt(p1, p2, theta, unit='r'):
         theta = math.radians(theta)
     else:
         raise ValueError("{0} is not a valid keyword".format(output))
-    mdpt = midpoint(p1, p2)
-    vec = vector(p1, mdpt)
+    vec = vector(p1, p2)
     rotvec = rotate(vec, theta)
     veclength = norm(vec) / math.cos(theta)
-    rotvec = np.multiply(veclength, np.divide(rotvec, norm(rotvec)))
+    rotvec = np.multiply(veclength, normalize(rotvec))
     return tuple(rotvec)
