@@ -2,6 +2,30 @@ import numpy as np
 from numpy.linalg import norm
 from scipy.ndimage.interpolation import rotate
 import math
+from itertools import tee, izip, cycle, islice
+
+# Recipes from https://docs.python.org/2/library/itertools.html#recipes
+
+def pairwise(iterable):
+    "s -> (s0,s1), (s1,s2), (s2, s3), ..."
+    a, b = tee(iterable)
+    next(b, None)
+    return izip(a, b)
+
+def roundrobin(*iterables):
+    "roundrobin('ABC', 'D', 'EF') --> A D E B F C"
+    # Recipe credited to George Sakkis
+    pending = len(iterables)
+    nexts = cycle(iter(it).next for it in iterables)
+    while pending:
+        try:
+            for next in nexts:
+                yield next()
+        except StopIteration:
+            pending -= 1
+            nexts = cycle(islice(nexts, pending))
+
+# Vector manipulation functions
 
 def angle(u, v, unit='r'):
     """Returns angle between vectors u and v."""
@@ -27,6 +51,10 @@ def vector(p1, p2):
     """Returns vector from p1 to p2."""
     vec = np.subtract(p2, p1)
     return tuple(vec)
+
+def distance(p1, p2):
+    """Returns distance between points p1 and p2."""
+    return norm(vector(p1, p2))
 
 def normalize(v):
     n = np.divide(v, norm(v))
@@ -63,7 +91,7 @@ def rotate(v, theta, unit='r'):
 
 # Given two points that represent a leg of a right triangle and an angle,
 # find the endpoint of the hypotenuse.
-def endpt(p1, p2, theta, unit='r'):
+def endpoint(p1, p2, theta, unit='r'):
     if unit == 'r':
         pass
     elif unit == 'd':
@@ -74,4 +102,5 @@ def endpt(p1, p2, theta, unit='r'):
     rotvec = rotate(vec, theta)
     veclength = norm(vec) / math.cos(theta)
     rotvec = np.multiply(veclength, normalize(rotvec))
-    return tuple(rotvec)
+    endpt = np.add(p1, rotvec)
+    return tuple(endpt)
