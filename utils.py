@@ -104,3 +104,9 @@ def endpoint(p1, p2, theta, unit='r'):
     rotvec = np.multiply(veclength, normalize(rotvec))
     endpt = np.add(p1, rotvec)
     return tuple(endpt)
+
+# Sorting functions
+
+    order = np.array(l).argsort()
+    ranks = order.argsort()
+    return ranks
