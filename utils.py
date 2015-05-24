@@ -107,6 +107,7 @@ def endpoint(p1, p2, theta, unit='r'):
 
 # Sorting functions
 
+def getRanks(l):
     order = np.array(l).argsort()
     ranks = order.argsort()
     return ranks

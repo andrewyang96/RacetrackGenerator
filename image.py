@@ -1,6 +1,6 @@
 from PIL import Image, ImageDraw
 from scipy.spatial import ConvexHull
-from utils import endpoint, midpoint, distance, pairwise, roundrobin
+from utils import endpoint, midpoint, distance, pairwise, roundrobin, getRanks
 import random
 import numpy as np
 
