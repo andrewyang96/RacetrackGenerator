@@ -1,12 +1,13 @@
 from PIL import Image, ImageDraw
 from scipy.spatial import ConvexHull
 from utils import endpoint, midpoint, distance, pairwise, roundrobin, getRanks
+from catmullrom import CatmullRomLoop
 import random
 import numpy as np
 
 class TrackImage(Image.Image):
     """Representation of a racetrack circuit. Extends PIL's Image class."""
-    def __init__(self, numPoints, dim, dotsBound=0.7, bgColor=(0,0,0), dotColor=(255,255,255), addedDotColor=(255,255,0), lineColor=(255,0,0), dotRadius=5, lineWidth=5, minWarpAngle=-25, maxWarpAngle=40, showDots=True, convexOnly=False):
+    def __init__(self, numPoints, dim, dotsBound=2/3., bgColor=(0,0,0), dotColor=(255,255,255), addedDotColor=(255,255,0), lineColor=(255,0,0), dotRadius=5, lineWidth=5, minWarpAngle=-25, maxWarpAngle=40, showDots=True, convexOnly=False):
         Image.Image.__init__(self)
         # initialize member variables
         self.mode = "RGB"
@@ -14,10 +15,10 @@ class TrackImage(Image.Image):
         self.addedPoints = []
         self.hullVertices = []
         # initialize other member variables
-        if numPoints >= 3:
+        if numPoints >= 4:
             self.numPoints = numPoints
         else:
-            raise ValueError("numPoints must be >= 3")
+            raise ValueError("numPoints must be >= 4")
         if isinstance(dim, (list, tuple)):
             if len(dim) == 2:
                 if all([isinstance(item, int) for item in dim]):
@@ -100,5 +101,6 @@ class TrackImage(Image.Image):
                 lowerRight = tuple(np.add(point, self.dotRadius))
                 draw.ellipse(upperLeft + lowerRight, fill=self.addedDotColor, outline=self.addedDotColor)
         # draw lines
-        draw.line(self.hullVertices, fill=self.lineColor, width=self.lineWidth)
+        #draw.line(self.hullVertices, fill=self.lineColor, width=self.lineWidth)
+        draw.line(CatmullRomLoop(self.hullVertices, self.lineWidth/5.), fill=self.lineColor, width=self.lineWidth)
         self.save(outfile)
